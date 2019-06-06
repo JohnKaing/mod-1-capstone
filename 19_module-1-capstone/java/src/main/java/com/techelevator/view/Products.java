@@ -1,12 +1,14 @@
 package com.techelevator.view;
 
+import java.math.BigDecimal;
+
 public abstract class Products {
 
 	private String name;
-	private double price = 0.00;
+	private BigDecimal price;
 	private String sound;
 	
-	public Products(String name, double price) {
+	public Products(String name, BigDecimal price) {
 		this.name = name;
 		this.price = price;
 		}
@@ -37,14 +39,14 @@ public abstract class Products {
 	/**
 	 * @return the price
 	 */
-	public double getPrice() {
+	public BigDecimal getPrice() {
 		return price;
 	}
 
 	/**
 	 * @param price the price to set
 	 */
-	public void setPrice(double price) {
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 

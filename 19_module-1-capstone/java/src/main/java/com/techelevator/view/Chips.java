@@ -1,10 +1,11 @@
 package com.techelevator.view;
 
+import java.math.BigDecimal;
 
 public class Chips extends Products {
 
 
-	public Chips(String name, double price) {
+	public Chips(String name, BigDecimal price) {
 		super(name, price);
 		
 		
