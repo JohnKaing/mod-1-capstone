@@ -1,19 +1,24 @@
 package com.techelevator.view;
 
+
 public class Gum extends Products {
 
-	
-	public Gum() {
-		super(getName,);
-	
-		System.out.println();
-	}
+
+	public Gum(String name, double price) {
+		super(name, price);
+		
 
 	
-	/*
-public void items(String name, double price, String sound)
-	 */
+		Gum testGum;
+		testGum = new Gum("juicy", 1.50);
+		System.out.println("testGum is: " + testGum.getName() + testGum.getPrice());
+		
+	}
 	
+	
+	
+	// Gum Chiclets = new Gum("Chiclets", 0.95);
 	
 	
 }
+

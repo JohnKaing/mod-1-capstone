@@ -5,13 +5,17 @@ public abstract class Products {
 	private String name;
 	private double price = 0.00;
 	private String sound;
-
-
+	
 	public Products(String name, double price) {
 		this.name = name;
 		this.price = price;
 		}
 
+	
+	
+	
+	
+	
 	public String getSound( ) {
 		return sound;
 	}
