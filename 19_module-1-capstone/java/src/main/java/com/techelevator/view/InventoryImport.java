@@ -1,4 +1,4 @@
-package com.techelevator;
+package com.techelevator.view;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,7 +14,7 @@ public class InventoryImport {
 	public static void main(String[] args) {
 		File inventoryFile = new File("/Users/stevenemes/workspace/java-module-1-capstone-team-6/19_module-1-capstone/java/vendingmachine.csv");
 		
-		Map<String, List<Product>> vendingMachineInventory = new TreeMap<>(); //make our map of type string and list product (product is two strings - name and price)
+		Map<String, List<Products>> vendingMachineInventory = new TreeMap<>(); //make our map of type string and list product (product is two strings - name and price)
 		try (Scanner stockImporter = new Scanner(inventoryFile)) {	// new scanner object to read from our inventory file
 			while (stockImporter.hasNextLine()) {				// while loop to keep going while the scanner has lines
 				String line = stockImporter.nextLine();
@@ -22,38 +22,38 @@ public class InventoryImport {
 					String[] stockImporterArray = line.split("\\|");	// handles pipe delimiter 
 
 					if (stockImporterArray[0].contains("A")) {				// handles chip items (pull slot location from element 0)
-						List<Product> productArray = new ArrayList<>();		// make new arrayList to hold products
+						List<Products> productArray = new ArrayList<>();		// make new arrayList to hold products
 						for (int i = 0; i < 6; i++) {						// only stocks to 5
-							ChipProduct temp = new ChipProduct(stockImporterArray[1], // pull name from element 1
+							Chips temp = new Chips(stockImporterArray[1], // pull name from element 1
 									new BigDecimal(stockImporterArray[2])); // makes new big decimal, pulls out price from element 2
 							productArray.add(temp); 						// executes the addition of the info into the arraylist
 						}
 						vendingMachineInventory.put(stockImporterArray[0], productArray); // update the vending machine inventory map with updated list values
 
 					} else if (stockImporterArray[0].contains("B")) {		// handles candy items
-						List<Product> productArray = new ArrayList<>();
+						List<Products> productArray = new ArrayList<>();
 						for (int i = 0; i < 6; i++) {
-							CandyProduct temp = new CandyProduct(stockImporterArray[1],
+							Candy temp = new Candy(stockImporterArray[1],
 									new BigDecimal(stockImporterArray[2]));
 							productArray.add(temp);
 						}
 						vendingMachineInventory.put(stockImporterArray[0], productArray);
 
 					} else if (stockImporterArray[0].contains("C")) { // handles drink items
-						List<Product> productArray = new ArrayList<>();
+						List<Products> productArray = new ArrayList<>();
 						for (int i = 0; i < 6; i++) {
 
-							DrinkProduct temp = new DrinkProduct(stockImporterArray[1],
+							Drinks temp = new Drinks(stockImporterArray[1],
 									new BigDecimal(stockImporterArray[2]));
 							productArray.add(temp);
 						}
 						vendingMachineInventory.put(stockImporterArray[0], productArray);
 
 					} else {
-						List<Product> productArray = new ArrayList<>();
+						List<Products> productArray = new ArrayList<>();
 
 						for (int i = 0; i < 6; i++) {
-							GumProduct temp = new GumProduct(stockImporterArray[1],
+							Gum temp = new Gum(stockImporterArray[1],
 									new BigDecimal(stockImporterArray[2]));
 							productArray.add(temp);
 						}
