@@ -10,7 +10,7 @@ public class Candy extends Products {
 		
 	}
 		public String getSound() {
-			return "Crunch Crunch, Yum!";
+			return "Munch Munch, Yum!";
 				
 	}
 	
