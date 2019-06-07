@@ -6,12 +6,13 @@ package com.techelevator;
 	public class VendingMachineCLI {
 		private static final String MAIN_MENU_OPTION_DISPLAY_ITEMS = "Display Vending Machine Items";
 		private static final String MAIN_MENU_OPTION_PURCHASE = "Purchase";
-		private static final String[] MAIN_MENU_OPTIONS = { MAIN_MENU_OPTION_DISPLAY_ITEMS, MAIN_MENU_OPTION_PURCHASE };
+		private static final String MAIN_MENU_OPTION_CLOSE = "Close Program";
+		private static final String[] MAIN_MENU_OPTIONS = { MAIN_MENU_OPTION_DISPLAY_ITEMS, MAIN_MENU_OPTION_PURCHASE, MAIN_MENU_OPTION_CLOSE };
 		private static final String SUB_MENU_OPTION_FEED_MONEY = "Feed money";
 		private static final String SUB_MENU_OPTION_PURCHASE = "Purchase";
 		private static final String SUB_MENU_OPTION_END = "Finish Transaction";
 		private static final String[] SUB_MENU_OPTIONS = { SUB_MENU_OPTION_FEED_MONEY, SUB_MENU_OPTION_PURCHASE,
-				SUB_MENU_OPTION_END };
+				SUB_MENU_OPTION_END};
 		private static final String MONEY_MENU_OPTION_ONE = "Feed 1 dollar";			// edited menu options to allow for feeding
 		private static final String MONEY_MENU_OPTION_TWO = "Feed 2 dollars";			//		different money amounts
 		private static final String MONEY_MENU_OPTION_FIVE = "Feed 5 dollars";
@@ -55,6 +56,10 @@ package com.techelevator;
 							break;
 						}
 					}
+				}
+				else if (choice.equals(MAIN_MENU_OPTION_CLOSE)) {
+					System.out.println("good bye");
+					System.exit(0);
 				}
 			}
 		}
