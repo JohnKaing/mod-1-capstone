@@ -1,72 +1,68 @@
 package com.techelevator;
-/**************************************************************************************************************************
-*  This is your Vending Machine Command Line Interface (CLI) class
-*  
-*  It is instantiated and invoked from the VendingMachineApp (main() application)
-*  
-*  Your code should be placed in here
-***************************************************************************************************************************/
-import com.techelevator.view.Menu;
-
-public class VendingMachineCLI {
-
-	private static final String MAIN_MENU_OPTION_DISPLAY_ITEMS = "Display Vending Machine Items";
-	private static final String MAIN_MENU_OPTION_PURCHASE      = "Purchase";
-	private static final String MAIN_MENU_OPTION_EXIT          = "Exit";
-	private static final String[] MAIN_MENU_OPTIONS = { MAIN_MENU_OPTION_DISPLAY_ITEMS,
-													    MAIN_MENU_OPTION_PURCHASE,
-													    MAIN_MENU_OPTION_EXIT
-													    };
 	
-	private Menu vendingMenu;              // Menu object to be used by an instance of this class
+	import java.util.Scanner;
+	import com.techelevator.view.Menu;
 	
-	public VendingMachineCLI(Menu menu) {  // Constructor - user will pas a menu for this class to use
-		this.vendingMenu = menu;           // Make the Menu the user object passed, our Menu
-	}
-	/**************************************************************************************************************************
-	*  VendingMachineCLI main processing loop
-	*  
-	*  Display the main menu and process option chosen
-	***************************************************************************************************************************/
-
-	public void run() {
-
-		boolean shouldProcess = true;         // Loop control variable
-		
-		while(shouldProcess) {                // Loop until user indicates they want to exit
-			
-			String choice = (String)vendingMenu.getChoiceFromOptions(MAIN_MENU_OPTIONS);  // Display menu and get choice
-			
-			switch(choice) {                  // Process based on user menu choice
-			
-				case MAIN_MENU_OPTION_DISPLAY_ITEMS:
-					displayItems();           // invoke method to display items in Vending Machine
-					break;                    // Exit switch statement
-			
-				case MAIN_MENU_OPTION_PURCHASE:
-					purchaseItems();          // invoke method to purchase items from Vending Machine
-					break;                    // Exit switch statement
-			
-				case MAIN_MENU_OPTION_EXIT:
-					endMethodProcessing();    // Invoke method to perform end of method processing
-					shouldProcess = false;    // Set variable to end loop
-					break;                    // Exit switch statement
-			}	
+	public class VendingMachineCLI {
+		private static final String MAIN_MENU_OPTION_DISPLAY_ITEMS = "Display Vending Machine Items";
+		private static final String MAIN_MENU_OPTION_PURCHASE = "Purchase";
+		private static final String[] MAIN_MENU_OPTIONS = { MAIN_MENU_OPTION_DISPLAY_ITEMS, MAIN_MENU_OPTION_PURCHASE };
+		private static final String SUB_MENU_OPTION_FEED_MONEY = "Feed money";
+		private static final String SUB_MENU_OPTION_PURCHASE = "Purchase";
+		private static final String SUB_MENU_OPTION_END = "Finish Transaction";
+		private static final String[] SUB_MENU_OPTIONS = { SUB_MENU_OPTION_FEED_MONEY, SUB_MENU_OPTION_PURCHASE,
+				SUB_MENU_OPTION_END };
+		private static final String MONEY_MENU_OPTION_ONE = "Feed 1 dollar";
+		private static final String MONEY_MENU_OPTION_TWO = "Feed 2 dollars";
+		private static final String MONEY_MENU_OPTION_FIVE = "Feed 5 dollars";
+		private static final String MONEY_MENU_OPTION_TEN = "Feed 10 dollars";
+		private static final String[] MONEY_MENU_OPTIONS = { MONEY_MENU_OPTION_ONE, MONEY_MENU_OPTION_TWO,
+				MONEY_MENU_OPTION_FIVE, MONEY_MENU_OPTION_TEN };
+		private static VendingMachine vm = null;
+		private Menu menu;
+	
+		public VendingMachineCLI(Menu menu) {
+			this.menu = menu;
 		}
-		return;                               // End method and return to caller
-	}
-/********************************************************************************************************
- * Methods used to perform processing
- ********************************************************************************************************/
-	public static void displayItems() {      // static attribute used as method is not associated with specific object instance
-		// Code to display items in Vending Machine
-	}
 	
-	public static void purchaseItems() {	 // static attribute used as method is not associated with specific object instance
-		// Code to purchase items from Vending Machine
-	}
+		public void run() {
+			while (true) {
+				String choice = (String) menu.getChoiceFromOptions(MAIN_MENU_OPTIONS);
+				if (choice.equals(MAIN_MENU_OPTION_DISPLAY_ITEMS)) {
+					vm.displayInventory();
+				} else if (choice.equals(MAIN_MENU_OPTION_PURCHASE)) {
+					while (true) {
+						String submenuChoice = (String) menu.getChoiceFromOptions(SUB_MENU_OPTIONS);
+						if (submenuChoice.equals(SUB_MENU_OPTION_FEED_MONEY)) {
+							String moneyMenuChoice = (String) menu.getChoiceFromOptions(MONEY_MENU_OPTIONS);
+							if (moneyMenuChoice.equals(MONEY_MENU_OPTION_ONE)) {
+								vm.feedMoney(1);
+							} else if (moneyMenuChoice.equals(MONEY_MENU_OPTION_TWO)) {
+								vm.feedMoney(2);
+							} else if (moneyMenuChoice.equals(MONEY_MENU_OPTION_FIVE)) {
+								vm.feedMoney(3);
+							} else if (moneyMenuChoice.equals(MONEY_MENU_OPTION_TEN)) {
+								vm.feedMoney(4);
+							}
+						} else if (submenuChoice.equals(SUB_MENU_OPTION_PURCHASE)) {
+							vm.displayInventory();
+							System.out.println("Please input your selection");
+							Scanner selection = new Scanner(System.in);
+							String guestSelection = selection.nextLine();
+							vm.purchase(guestSelection);
+						} else if (submenuChoice.equals(SUB_MENU_OPTION_END)) {
+							vm.completeTransaction();
+							break;
+						}
+					}
+				}
+			}
+		}
 	
-	public static void endMethodProcessing() { // static attribute used as method is not associated with specific object instance
-		// Any processing that needs to be done before method ends
+		public static void main(String[] args) {
+			Menu menu = new Menu(System.in, System.out);
+			VendingMachineCLI cli = new VendingMachineCLI(menu);
+			vm = new VendingMachine(new InventoryImport().fileImporter());
+			cli.run();
+		}
 	}
-}
