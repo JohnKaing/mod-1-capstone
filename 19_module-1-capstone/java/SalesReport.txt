@@ -1,1 +1,4 @@
-resultQuantity is: -1
+Potato Crisps A1|1
+**TOTAL SALES** 3.05
+Cowtales B2|1
+**TOTAL SALES** 1.50

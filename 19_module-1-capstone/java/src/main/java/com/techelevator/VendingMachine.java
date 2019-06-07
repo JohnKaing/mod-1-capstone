@@ -81,7 +81,9 @@ package com.techelevator;
 					Products nameOne = inventory.get(guestSelection).get(0);
 					String productOne = nameOne.getName() + " " + guestSelection;
 					writer.writer(productOne, costOne, balance);
-					writer2.writer2(productOne);
+					int quantity1 = 0;
+					quantity1 = quantity1 + 1;
+					writer2.writer2(productOne, costOne, quantity1);
 				} else {
 					System.out.println("Please insert more cash.");
 					
