@@ -12,8 +12,8 @@ package com.techelevator;
 		private static final String SUB_MENU_OPTION_END = "Finish Transaction";
 		private static final String[] SUB_MENU_OPTIONS = { SUB_MENU_OPTION_FEED_MONEY, SUB_MENU_OPTION_PURCHASE,
 				SUB_MENU_OPTION_END };
-		private static final String MONEY_MENU_OPTION_ONE = "Feed 1 dollar";
-		private static final String MONEY_MENU_OPTION_TWO = "Feed 2 dollars";
+		private static final String MONEY_MENU_OPTION_ONE = "Feed 1 dollar";			// edited menu options to allow for feeding
+		private static final String MONEY_MENU_OPTION_TWO = "Feed 2 dollars";			//		different money amounts
 		private static final String MONEY_MENU_OPTION_FIVE = "Feed 5 dollars";
 		private static final String MONEY_MENU_OPTION_TEN = "Feed 10 dollars";
 		private static final String[] MONEY_MENU_OPTIONS = { MONEY_MENU_OPTION_ONE, MONEY_MENU_OPTION_TWO,

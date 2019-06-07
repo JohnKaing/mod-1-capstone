@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class LogWriter {
 	public void writer(String typeOfTransaction, BigDecimal amount, BigDecimal balance) {
@@ -15,8 +16,15 @@ public class LogWriter {
 		LocalTime now = LocalTime.now();
 		try (PrintWriter logWriter = new PrintWriter(new FileOutputStream(new File("./log.txt"), true))) {
 
-			String printToday = today.toString();
-			String printTime = now.toString().substring(0, now.toString().length() - 4);
+//			LocalDate localDate = LocalDate.now();//For reference
+//			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd LLLL yyyy");
+//			String formattedString = localDate.format(formatter);
+			DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("MM/dd/uuuu");
+			DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss a");
+			String printToday = today.format(formatterDate);
+			String printTime  = now.format(formatterTime);
+//			String printToday = today.toString();
+//			String printTime = now.toString().substring(0, now.toString().length() - 4);
 			String printTypeOfTransaction = typeOfTransaction.toString();
 			String printAmount = amount.toString();
 			String printBalance = balance.toString();
