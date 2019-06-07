@@ -11,6 +11,7 @@ package com.techelevator;
 		List<Products> purchaseList = new ArrayList<>();			// new ArrayList to hold purchases
 		Map<String, List<Products>> inventory = new TreeMap<>(); // map to hold inventory, key is slot location
 		LogWriter writer = new LogWriter();
+		ReportWriter writer2 = new ReportWriter();
 
 	public VendingMachine(Map<String, List<Products>> inventory) {
 		this.inventory = inventory;
@@ -80,6 +81,7 @@ package com.techelevator;
 					Products nameOne = inventory.get(guestSelection).get(0);
 					String productOne = nameOne.getName() + " " + guestSelection;
 					writer.writer(productOne, costOne, balance);
+					writer2.writer2(productOne);
 				} else {
 					System.out.println("Please insert more cash.");
 					

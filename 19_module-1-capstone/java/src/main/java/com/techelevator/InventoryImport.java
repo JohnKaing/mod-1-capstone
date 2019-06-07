@@ -11,8 +11,8 @@ import java.util.TreeMap;
 
 public class InventoryImport {
 
-	    Map<String, List<Products>> fileImporter() {
-		File inventoryFile = new File("/Users/christopherclark/workspace/java-module-1-capstone-team-6/19_module-1-capstone/java/vendingmachine.csv");
+	   static  Map<String, List<Products>> fileImporter() {
+	    	File inventoryFile = new File("./vendingmachine.csv");
 		
 		Map<String, List<Products>> vendingMachineInventory = new TreeMap<>(); //make our map of type string and list product (product is two strings - name and price)
 		try (Scanner stockImporter = new Scanner(inventoryFile)) {	// new scanner object to read from our inventory file

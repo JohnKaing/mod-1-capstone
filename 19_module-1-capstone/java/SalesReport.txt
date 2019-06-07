@@ -1,0 +1,1 @@
+resultQuantity is: -1
