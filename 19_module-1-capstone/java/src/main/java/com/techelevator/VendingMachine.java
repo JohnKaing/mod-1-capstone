@@ -22,7 +22,7 @@ package com.techelevator;
 		for (Map.Entry<String, List<Products>> entry : inventory.entrySet()) {
 			String key = entry.getKey();
 			List value = entry.getValue();
-			if (value.size() == 1) {
+			if (value.size() == 0) {
 				System.out.println(key + " Out of stock");
 			} else {
 
@@ -62,11 +62,12 @@ package com.techelevator;
 	}
 
 	public void purchase(String guestSelection) {
+		try {
 		if (! inventory.containsKey(guestSelection)) { 
 			System.out.println("Sorry that product does not exist, please choose a valid product.");
 		} 
 		if (inventory.containsKey(guestSelection)) {
-			if (inventory.get(guestSelection).size() == 1) {
+			if (inventory.get(guestSelection).size() <= 0) {
 				System.out.println("Sorry that product is out of stock");
 			}
 			if (inventory.get(guestSelection).size() >= 1) {
@@ -74,17 +75,24 @@ package com.techelevator;
 					balance = balance.subtract(inventory.get(guestSelection).get(0).getPrice());
 					Products p = inventory.get(guestSelection).remove(0);
 					purchaseList.add(p);
-					Products cost = inventory.get(guestSelection).get(1);
+					Products cost = inventory.get(guestSelection).get(0);
 					BigDecimal costOne = cost.getPrice();
 					Products nameOne = inventory.get(guestSelection).get(0);
 					String productOne = nameOne.getName() + " " + guestSelection;
 					writer.writer(productOne, costOne, balance);
 				} else {
 					System.out.println("Please insert more cash.");
+					
 				}
+				}
+			
 			}
-		}
+		}catch(IndexOutOfBoundsException exception) {
+		    System.out.println("***************     You have selected an item that is no longer in stock.     ***************");
+		    System.out.println("***************     Please select another item or close the transaction.      ***************");
+		    System.out.println();
 		System.out.println("Your balance is " + balance);
 	}
 }
+	}
 
