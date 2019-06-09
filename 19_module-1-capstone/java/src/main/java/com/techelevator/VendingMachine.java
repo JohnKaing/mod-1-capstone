@@ -1,102 +1,109 @@
 package com.techelevator;
-	
-	import java.math.BigDecimal;
-	import java.util.ArrayList;
-	import java.util.List;
-	import java.util.Map;
-	import java.util.TreeMap;
-	
-	public class VendingMachine {
-		BigDecimal balance = new BigDecimal(0.00).setScale(2);
-		List<Products> purchaseList = new ArrayList<>();			// new ArrayList to hold purchases
-		Map<String, List<Products>> inventory = new TreeMap<>(); // map to hold inventory, key is slot location
-		LogWriter writer = new LogWriter();
-		ReportWriter writer2 = new ReportWriter();
 
-	public VendingMachine(Map<String, List<Products>> inventory) {
-		this.inventory = inventory;
-	}
-	
-	
-	
-	public void displayInventory() {
-		for (Map.Entry<String, List<Products>> entry : inventory.entrySet()) {
-			String key = entry.getKey();
-			List value = entry.getValue();
-			if (value.size() == 0) {
-				System.out.println(key + " Out of stock");
-			} else {
 
-			}
-			System.out.println(key + " " + value.subList(0, 1) + " " + (value.size() - 1));
-		}
-	}
-		
-	
-	public void feedMoney(int addMoney) {
-		String typeOfTransaction = "FEED MONEY:";
-		if (addMoney == 1) {
-			balance = balance.add(new BigDecimal(1.00));
-			writer.writer(typeOfTransaction, new BigDecimal(1.00).setScale(2), balance);
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-		} else if (addMoney == 2) {
-			balance = balance.add(new BigDecimal(2.00));
-			writer.writer(typeOfTransaction, new BigDecimal(2.00).setScale(2), balance);
-		} else if (addMoney == 3) {
-			balance = balance.add(new BigDecimal(5.00));
-			writer.writer(typeOfTransaction, new BigDecimal(5.00).setScale(2), balance);
-		} else if (addMoney == 4) {
-			balance = balance.add(new BigDecimal(10.00));
-			writer.writer(typeOfTransaction, new BigDecimal(10.00).setScale(2), balance);
-		}
-		System.out.println("Your balance is " + balance);
-	}
+public class VendingMachine {
 
-	public void completeTransaction() {
-		Change thisChange = new Change();
-		thisChange.giveChange(balance);
-		writer.writer("GIVE CHANGE:", balance, new BigDecimal(0.00).setScale(2));
-		while (purchaseList.size() > 0) {
-			Products purchases = purchaseList.remove(0);
-			System.out.println(purchases.getSound());
-		}
-	}
+    private LinkedHashMap<String, List<Products>> itemsInTheMachine = new LinkedHashMap<>();
+    private final LogWriter logger = new LogWriter();
+    private final SalesReport salesReport = new SalesReport();
+    private BigDecimal balance = new BigDecimal(0);
 
-	public void purchase(String guestSelection) {
-		try {
-		if (! inventory.containsKey(guestSelection)) { 
-			System.out.println("Sorry that product does not exist, please choose a valid product.");
-		} 
-		if (inventory.containsKey(guestSelection)) {
-			if (inventory.get(guestSelection).size() <= 0) {
-				System.out.println("Sorry that product is out of stock");
-			}
-			if (inventory.get(guestSelection).size() >= 1) {
-				if (balance.compareTo(inventory.get(guestSelection).get(0).getPrice()) >= 0) {
-					balance = balance.subtract(inventory.get(guestSelection).get(0).getPrice());
-					Products p = inventory.get(guestSelection).remove(0);
-					purchaseList.add(p);
-					Products cost = inventory.get(guestSelection).get(0);
-					BigDecimal costOne = cost.getPrice();
-					Products nameOne = inventory.get(guestSelection).get(0);
-					String productOne = nameOne.getName() + " " + guestSelection;
-					writer.writer(productOne, costOne, balance);
-					int quantity1 = 0;
-					quantity1 = quantity1 + 1;
-					writer2.writer2(productOne, costOne, quantity1);
-				} else {
-					System.out.println("Please insert more cash.");
-					
-				}
-				}
-			
-			}
-		}catch(IndexOutOfBoundsException exception) {
-		    System.out.println("***************     You have selected an item that is no longer in stock.     ***************");
-		    System.out.println("***************     Please select another item or close the transaction.      ***************");
-		    System.out.println();
-		System.out.println("Your balance is " + balance);
-	}
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void buyItem(String slot) {
+        List<Products> itemListStockCount = itemsInTheMachine.get(slot);
+        if (outOfStock(itemListStockCount)) {
+            System.out.println("SOLD OUT");
+        } else {
+            Products item = itemListStockCount.get(0);
+            BigDecimal itemPrice = item.getPrice();
+            if (balance.doubleValue() < itemPrice.doubleValue())
+                System.out.println("Please Insert More Money.");
+
+            else {
+                System.out.println("\nConsuming " + item.getName() + "..." + "\n" + item.getSound() + "\n");
+                BigDecimal startingBalance = balance;
+
+                balance = balance.subtract(itemPrice);
+
+                logger.logPurchase(slot, item, startingBalance, balance); // log and salesReport
+                salesReport.updateBalance(itemPrice);
+                salesReport.updateInventory(item.getName());
+                itemListStockCount.remove(0);
+            }
+        }
+    }
+
+    private boolean outOfStock(List<Products> items) {
+        return items.isEmpty();
+    }
+
+    public void feedMoney(BigDecimal money) {
+        balance = balance.add(money);
+        System.out.println("Inserted $" + money.toString() + " dollars.");
+        logger.logFeed(money, balance);
+
+    }
+
+    public void displayItems() {
+        System.out.println();
+        System.out.println(String.format("%-5s%-19s%10s%10s", "Slot", "Name", "Price", "Count"));
+        System.out.println("---------------------------------------------");
+        for (Map.Entry<String, List<Products>> entry : itemsInTheMachine.entrySet()) {
+            if (!outOfStock(entry.getValue())) {
+                String itemSlot = entry.getKey();
+                String itemName = entry.getValue().get(0).getName();
+                String itemPrice = "$" + entry.getValue().get(0).getPrice().toString();
+                String itemCount = String.valueOf(entry.getValue().size());
+
+                System.out.println(String.format("%-5s%-19s%10s%10s", itemSlot, itemName, itemPrice, itemCount));
+            } else {
+                String itemSlot = entry.getKey();
+                System.out.println(String.format("%-15s%7s", itemSlot, "SOLD OUT")); // Stops Array Out Of Bounds error
+            }
+        }
+        System.out.println("---------------------------------------------");
+    }
+
+    public Map<String, List<Products>> getItemsInTheMachine() {
+        return itemsInTheMachine;
+    }
+
+
+    public void resetBalance() {
+        balance = new BigDecimal(0);
+    }
+
+
+    public void loadInventory() {
+        InventoryImport importer = new InventoryImport();
+        itemsInTheMachine = importer.passImportMapToVendingMachine();
+    }
+
+    public void returnChange() {
+        if (balance.doubleValue() > 0) {  // Stops message from displaying and writing to the log if 0
+            Change change = new Change();
+            BigDecimal changeGiven = getBalance();
+
+            System.out.println("\n" + change.makeChange(getBalance()));
+
+            resetBalance();
+            logger.logChange(changeGiven, getBalance());
+        }
+    }
+
+    public String formattedBalanceToCurrency() {
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US); // Fancy formatting
+        return numberFormat.format(balance.doubleValue());
+    }
+
 }
-	}
-

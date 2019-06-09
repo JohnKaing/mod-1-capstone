@@ -1,23 +1,36 @@
 package com.techelevator;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 
 public class Change {
-	private double balance1;
-	private int quarters1;
-	private int dime1;
-	private int nickels1;
 
-	public void giveChange(BigDecimal balance) {
+    private static final Coin[] coins = new Coin[]{
+            new Quarter(), new Dime(), new Nickel()};
 
-		balance1 = (balance.doubleValue() * 100);
-		quarters1 = ((int) balance1 / 25);
-		balance1 = balance1 - (quarters1 * 25);
-		dime1 = ((int) balance1 / 10);
-		balance1 = balance1 - (dime1 * 10);
-		nickels1 = ((int) balance1 / 5);
+    public String makeChange(BigDecimal money) {
+        StringBuilder coinReturnString = new StringBuilder();
+        int amount = (int) (money.doubleValue() * 100);
+        LinkedHashMap<Coin, Integer> change = new LinkedHashMap<>();
 
-		System.out.println(
-				"Your change is " + quarters1 + " quarters and " + dime1 + " dimes and " + nickels1 + " nickels. ");
-	}
+        for (Coin coin : coins) {
+            if (amount <= 0) {
+                break;
+            }
+            int cnt = amount / coin.getValue();
+            if (cnt > 0) {
+                amount = amount % (coin.getValue() * cnt);
+                change.put(coin, cnt);
+            }
+        }
+
+        for (Coin coin : change.keySet()) {
+            String isPlural = (change.get(coin) > 1) ? "s " : " ";
+            coinReturnString.append(change.get(coin)).append(" ").append(coin.getName()).append(isPlural); // Handles formatting for plural change return
+            																							    
+        }
+        coinReturnString.append("returned.");
+        return coinReturnString.toString().trim();
+    }
+
 }

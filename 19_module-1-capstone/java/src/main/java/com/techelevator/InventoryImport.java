@@ -1,72 +1,73 @@
 package com.techelevator;
 
+
+
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.TreeMap;
 
 public class InventoryImport {
 
-	   static  Map<String, List<Products>> fileImporter() {
-	    	File inventoryFile = new File("./vendingmachine.csv");
-		
-		Map<String, List<Products>> vendingMachineInventory = new TreeMap<>(); //make our map of type string and list product (product is two strings - name and price)
-		try (Scanner stockImporter = new Scanner(inventoryFile)) {	// new scanner object to read from our inventory file
-			while (stockImporter.hasNextLine()) {				// while loop to keep going while the scanner has lines
-				String line = stockImporter.nextLine();
-				if (!line.isEmpty()) {									// don't import empty lines
-					String[] stockImporterArray = line.split("\\|");	// handles pipe delimiter 
 
-					if (stockImporterArray[0].contains("A")) {				// handles chip items (pull slot location from element 0)
-						List<Products> productArray = new ArrayList<>();		// make new arrayList to hold products
-						for (int i = 0; i < 6; i++) {						// only stocks to 5
-							Chips temp = new Chips(stockImporterArray[1], // pull name from element 1
-									new BigDecimal(stockImporterArray[2])); // makes new big decimal, pulls out price from element 2
-							productArray.add(temp); 						// executes the addition of the info into the arraylist
-						}
-						vendingMachineInventory.put(stockImporterArray[0], productArray); // update the vending machine inventory map with updated list values
+    private final LinkedHashMap<String, List<Products>> itemsInTheMachine = new LinkedHashMap<>();
 
-					} else if (stockImporterArray[0].contains("B")) {		// handles candy items
-						List<Products> productArray = new ArrayList<>();
-						for (int i = 0; i < 6; i++) {
-							Candy temp = new Candy(stockImporterArray[1],
-									new BigDecimal(stockImporterArray[2]));
-							productArray.add(temp);
-						}
-						vendingMachineInventory.put(stockImporterArray[0], productArray);
+    public String[] parseInputFileByLine(File inputFile) {
+        StringBuilder line = new StringBuilder();
+        try (Scanner in = new Scanner(inputFile)) {
+            while (in.hasNextLine()) {
+                line.append(in.nextLine()).append("\n");
+            }
 
-					} else if (stockImporterArray[0].contains("C")) { // handles drink items
-						List<Products> productArray = new ArrayList<>();
-						for (int i = 0; i < 6; i++) {
+        } catch (IOException e) {
+            System.out.println(e.toString());
+            System.out.println("Could not " + inputFile + " file");
+        }
+        return line.toString().split("[\n]");
 
-							Drinks temp = new Drinks(stockImporterArray[1],
-									new BigDecimal(stockImporterArray[2]));
-							productArray.add(temp);
-						}
-						vendingMachineInventory.put(stockImporterArray[0], productArray);
+    }
 
-					} else {
-						List<Products> productArray = new ArrayList<>();
+    private void createInventoryMap(String[] parsedFile) {
+        for (String line : parsedFile) {
 
-						for (int i = 0; i < 6; i++) {
-							Gum temp = new Gum(stockImporterArray[1],
-									new BigDecimal(stockImporterArray[2]));
-							productArray.add(temp);
-						}
-						vendingMachineInventory.put(stockImporterArray[0], productArray);
-					}
-				}
-			}
-			return vendingMachineInventory;
+            String[] inputFileItems = line.split("[|]"); // Handles Pipe Delimiter
+            List<Products> itemList = new ArrayList<>();
+            String slot = inputFileItems[0];
+            String name = inputFileItems[1];
+            BigDecimal price = new BigDecimal(inputFileItems[2]);
+            if (slot.startsWith("A")) {					// Handles Chips
+                Products item = new Chips(name, price);
+                itemLoader(itemList, slot, item);
+            } else if (slot.startsWith("B")) {			// Handles Candy
+                Products item = new Candy(name, price);
+                itemLoader(itemList, slot, item);
+            } else if (slot.startsWith("C")) {			// Handles Drinks
+                Products item = new Drinks(name, price);
+                itemLoader(itemList, slot, item);
+            } else if (slot.startsWith("D")) {			// Handles Gum
+                Products item = new Gum(name, price);
+                itemLoader(itemList, slot, item);
+            }
 
-		} catch (FileNotFoundException e) {		// handles if they input the wrong path / file
-			System.out.println("Your file does not exist");
-			System.exit(1);
-			return vendingMachineInventory;
-		}
-	}
+        }
+    }
+
+    private void itemLoader(List<Products> itemList, String slot, Products item) {
+        for (int i = 0; i < 5; i++) {
+            itemList.add(item);
+            itemsInTheMachine.put(slot, itemList);
+        }
+    }
+
+
+    public LinkedHashMap<String, List<Products>> passImportMapToVendingMachine() {
+        String[] parsedFile = parseInputFileByLine(new File("vendingmachine.csv"));
+        createInventoryMap(parsedFile);
+        return itemsInTheMachine;
+    }
+
+
 }
